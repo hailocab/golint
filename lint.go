@@ -79,7 +79,7 @@ func (f *file) lint() []Problem {
 	f.lintErrors()
 	f.lintErrorStrings()
 	f.lintReceiverNames()
-	f.lintIncDec() 
+	f.lintIncDec()
 
 	return f.problems
 }
@@ -364,49 +364,13 @@ func lintName(name string) (should string) {
 
 		// [w,i) is a word.
 		word := string(runes[w:i])
-		if u := strings.ToUpper(word); commonInitialisms[u] {
-			// Keep consistent case, which is lowercase only at the start.
-			if w == 0 && unicode.IsLower(runes[w]) {
-				u = strings.ToLower(u)
-			}
-			// All the common initialisms are ASCII,
-			// so we can replace the bytes exactly.
-			copy(runes[w:], []rune(u))
-		} else if w > 0 && strings.ToLower(word) == word {
+		if w > 0 && strings.ToLower(word) == word {
 			// already all lowercase, and not the first word, so uppercase the first character.
 			runes[w] = unicode.ToUpper(runes[w])
 		}
 		w = i
 	}
 	return string(runes)
-}
-
-// commonInitialisms is a set of common initialisms.
-// Only add entries that are highly unlikely to be non-initialisms.
-// For instance, "ID" is fine (Freudian code is rare), but "AND" is not.
-var commonInitialisms = map[string]bool{
-	"API":   true,
-	"ASCII": true,
-	"CPU":   true,
-	"CSS":   true,
-	"DNS":   true,
-	"EOF":   true,
-	"HTML":  true,
-	"HTTP":  true,
-	//"ID":    true,
-	"IP":   true,
-	"JSON": true,
-	"LHS":  true,
-	"QPS":  true,
-	"RAM":  true,
-	"RHS":  true,
-	"RPC":  true,
-	"TTL":  true,
-	"UI":   true,
-	"UID":  true,
-	"URL":  true,
-	"UTF8": true,
-	"XML":  true,
 }
 
 // lintTypeDoc examines the doc comment on a type.
