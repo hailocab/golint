@@ -79,7 +79,7 @@ func (f *file) lint() []Problem {
 	f.lintErrors()
 	f.lintErrorStrings()
 	f.lintReceiverNames()
-	f.lintIncDec()
+	f.lintIncDec() 
 
 	return f.problems
 }
