@@ -77,7 +77,6 @@ func (f *file) lint() []Problem {
 	f.lintRanges()
 	f.lintErrorf()
 	f.lintErrors()
-	f.lintErrorStrings()
 	f.lintReceiverNames()
 	f.lintIncDec()
 
