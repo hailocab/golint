@@ -71,7 +71,6 @@ func (f *file) lint() []Problem {
 	f.lintPackageComment()
 	f.lintImports()
 	f.lintBlankImports()
-	f.lintExported()
 	f.lintNames()
 	f.lintVarDecls()
 	f.lintElses()
@@ -200,52 +199,6 @@ func (f *file) lintImports() {
 
 	}
 
-}
-
-// lintExported examines the doc comments of exported names.
-// It complains if any required doc comments are missing,
-// or if they are not of the right form. The exact rules are in
-// lintFuncDoc, lintTypeDoc and lintValueSpecDoc; this function
-// also tracks the GenDecl structure being traversed to permit
-// doc comments for constants to be on top of the const block.
-func (f *file) lintExported() {
-	if f.isTest() {
-		return
-	}
-
-	var lastGen *ast.GenDecl // last GenDecl entered.
-
-	// Set of GenDecls that have already had missing comments flagged.
-	genDeclMissingComments := make(map[*ast.GenDecl]bool)
-
-	f.walk(func(node ast.Node) bool {
-		switch v := node.(type) {
-		case *ast.GenDecl:
-			if v.Tok == token.IMPORT {
-				return false
-			}
-			// token.CONST, token.TYPE or token.VAR
-			lastGen = v
-			return true
-		case *ast.FuncDecl:
-			f.lintFuncDoc(v)
-			// Don't proceed inside funcs.
-			return false
-		case *ast.TypeSpec:
-			// inside a GenDecl, which usually has the doc
-			doc := v.Doc
-			if doc == nil {
-				doc = lastGen.Doc
-			}
-			f.lintTypeDoc(v, doc)
-			// Don't proceed inside types.
-			return false
-		case *ast.ValueSpec:
-			f.lintValueSpecDoc(v, lastGen, genDeclMissingComments)
-			return false
-		}
-		return true
-	})
 }
 
 var allCapsRE = regexp.MustCompile(`^[A-Z0-9_]+$`)
@@ -440,20 +393,20 @@ var commonInitialisms = map[string]bool{
 	"EOF":   true,
 	"HTML":  true,
 	"HTTP":  true,
-	"ID":    true,
-	"IP":    true,
-	"JSON":  true,
-	"LHS":   true,
-	"QPS":   true,
-	"RAM":   true,
-	"RHS":   true,
-	"RPC":   true,
-	"TTL":   true,
-	"UI":    true,
-	"UID":   true,
-	"URL":   true,
-	"UTF8":  true,
-	"XML":   true,
+	//"ID":    true,
+	"IP":   true,
+	"JSON": true,
+	"LHS":  true,
+	"QPS":  true,
+	"RAM":  true,
+	"RHS":  true,
+	"RPC":  true,
+	"TTL":  true,
+	"UI":   true,
+	"UID":  true,
+	"URL":  true,
+	"UTF8": true,
+	"XML":  true,
 }
 
 // lintTypeDoc examines the doc comment on a type.

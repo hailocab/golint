@@ -16,7 +16,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/golang/lint"
+	"github.com/iand/lint"
 )
 
 var minConfidence = flag.Float64("min_confidence", 0.8, "minimum confidence of a problem to print it")
@@ -24,12 +24,17 @@ var minConfidence = flag.Float64("min_confidence", 0.8, "minimum confidence of a
 func main() {
 	flag.Parse()
 
-	for _, filename := range flag.Args() {
-		if isDir(filename) {
-			lintDir(filename)
-		} else {
-			lintFile(filename)
+	if len(flag.Args()) > 0 {
+		for _, filename := range flag.Args() {
+
+			if isDir(filename) {
+				lintDir(filename)
+			} else {
+				lintFile(filename)
+			}
 		}
+	} else {
+		lintDir(".")
 	}
 }
 
@@ -58,9 +63,18 @@ func lintFile(filename string) {
 	}
 }
 
+var ignoredPaths = map[string]bool{
+	"proto/": true,
+}
+
 func lintDir(dirname string) {
 	filepath.Walk(dirname, func(path string, info os.FileInfo, err error) error {
 		if err == nil && !info.IsDir() && strings.HasSuffix(path, ".go") {
+			for ignore := range ignoredPaths {
+				if strings.Contains(path, ignore) {
+					return nil
+				}
+			}
 			lintFile(path)
 		}
 		return err
