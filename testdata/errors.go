@@ -22,14 +22,3 @@ var (
 func f() {
 	var whatever = errors.New("ok") // ok
 }
-
-// Check for the error strings themselves.
-
-func g(x int) error {
-	if x < 1 {
-		return fmt.Errorf("This %d is too low", x) // MATCH /error strings.*not be capitalized/
-	} else if x == 0 {
-		return fmt.Errorf("XML time") // ok
-	}
-	return errors.New(`too much stuff.`) // MATCH /error strings.*not end with punctuation/
-}
