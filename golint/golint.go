@@ -16,7 +16,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/iand/lint"
+	"github.com/hailocab/golint"
 )
 
 var minConfidence = flag.Float64("min_confidence", 0.8, "minimum confidence of a problem to print it")
@@ -62,7 +62,7 @@ func lintFile(filename string) {
 		}
 	}
 }
- 
+
 var ignoredPaths = map[string]bool{
 	"proto/": true,
 }
@@ -70,7 +70,7 @@ var ignoredPaths = map[string]bool{
 func lintDir(dirname string) {
 	filepath.Walk(dirname, func(path string, info os.FileInfo, err error) error {
 		if err == nil && !info.IsDir() && strings.HasSuffix(path, ".go") {
-			for ignore:= range ignoredPaths {
+			for ignore := range ignoredPaths {
 				if strings.Contains(path, ignore) {
 					return nil
 				}
